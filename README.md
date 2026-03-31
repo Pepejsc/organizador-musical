@@ -1,7 +1,5 @@
----
-
 ```markdown
-# Organizador Musical Modern-Neon 
+# 🎵 Organizador Musical Modern-Neon 🚀
 
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
@@ -14,11 +12,11 @@ Este es un sistema **Full Stack** diseñado para melómanos y DJs que necesitan 
 
 ## 🔗 Enlace al Proyecto
 Puedes probar la aplicación en vivo aquí:  
-**[https://pepejsc.github.io/organizador-musical/](https://pepejsc.github.io/organizador-musical/)**
+👉 **[https://pepejsc.github.io/organizador-musical/](https://pepejsc.github.io/organizador-musical/)**
 
 ---
 
-## Características Principales
+## ✨ Características Principales
 
 * **Interfaz Modern-Neon:** Diseño oscuro con acentos fucsia y morado neón, optimizado para una experiencia visual atractiva.
 * **Detección de Duplicados:** Analiza la "huella digital" (Hash) de cada canción. No importa si tienen nombres diferentes; si el audio es el mismo, el sistema lo detecta.
@@ -28,7 +26,7 @@ Puedes probar la aplicación en vivo aquí:
 
 ---
 
-## Tecnologías Utilizadas
+## 🛠️ Tecnologías Utilizadas
 
 ### Frontend
 * **React.js**: Biblioteca principal para la interfaz.
@@ -43,7 +41,7 @@ Puedes probar la aplicación en vivo aquí:
 
 ---
 
-## Arquitectura del Sistema
+## 🏗️ Arquitectura del Sistema
 
 El proyecto está dividido en dos partes conectadas de forma segura:
 1.  **Frontend**: Alojado en **GitHub Pages**.
@@ -52,7 +50,7 @@ El proyecto está dividido en dos partes conectadas de forma segura:
 
 ---
 
-## Instalación Local
+## 🚀 Instalación Local
 
 Si deseas ejecutar este proyecto en tu máquina:
 
@@ -79,9 +77,11 @@ npm run dev
 
 ---
 
-## Autor
+## 👤 Autor
 **Pepe (P3p3)** *Desarrollador enfocado en soluciones web modernas.*
 
 ---
 *Nota: Este proyecto utiliza una instancia gratuita en Render. Si el servidor está inactivo, la primera petición puede tardar unos 40 segundos en procesarse mientras el motor despierta.*
 ```
+
+---
