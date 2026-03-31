@@ -83,7 +83,7 @@ function App() {
     formData.append('archivo', archivo);
 
     try {
-      const respuesta = await fetch('http://127.0.0.1:8000/procesar-comprimido/', {
+      const respuesta = await fetch('https://organizador-musical.onrender.com/procesar-comprimido/', {
         method: 'POST',
         body: formData,
       });
@@ -134,7 +134,7 @@ function App() {
     }, 400);
 
     try {
-      const respuesta = await fetch('http://127.0.0.1:8000/generar-zip-final/', {
+      const respuesta = await fetch('https://organizador-musical.onrender.com/generar-zip-final/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
