@@ -5,13 +5,56 @@ function App() {
   const [archivo, setArchivo] = useState(null)
   const [cargando, setCargando] = useState(false)
   const [resultado, setResultado] = useState(null)
-  
   const [archivosAEliminar, setArchivosAEliminar] = useState([])
   const [organizarPorGenero, setOrganizarPorGenero] = useState(false)
   const [procesandoFinal, setProcesandoFinal] = useState(false)
+  const [arrastrando, setArrastrando] = useState(false)
   
-  // Usamos una referencia para poder borrar el texto de "Music.rar" al final
+  const [progreso, setProgreso] = useState(0)
+  const [textoProgreso, setTextoProgreso] = useState("")
+
   const inputArchivoRef = useRef(null) 
+
+  const entradaBloqueada = cargando || resultado !== null || procesandoFinal;
+
+  // --- NUEVA FUNCIÓN: RESET MAESTRO ---
+  const resetearApp = () => {
+    setArchivo(null);
+    setResultado(null);
+    setArchivosAEliminar([]);
+    setOrganizarPorGenero(false);
+    setProgreso(0);
+    setTextoProgreso("");
+    if (inputArchivoRef.current) inputArchivoRef.current.value = "";
+  }
+
+  const manejarDragOver = (e) => {
+    e.preventDefault();
+    if (entradaBloqueada) return;
+    setArrastrando(true);
+  }
+
+  const manejarDragLeave = (e) => {
+    e.preventDefault();
+    if (entradaBloqueada) return;
+    setArrastrando(false);
+  }
+
+  const manejarDrop = (e) => {
+    e.preventDefault();
+    if (entradaBloqueada) return;
+    setArrastrando(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      setArchivo(e.dataTransfer.files[0]);
+      setResultado(null);
+      setArchivosAEliminar([]);
+    }
+  }
+
+  const manejarClicCaja = () => {
+    if (entradaBloqueada) return;
+    inputArchivoRef.current.click();
+  }
 
   const manejarCambioArchivo = (evento) => {
     setArchivo(evento.target.files[0])
@@ -22,6 +65,20 @@ function App() {
   const subirArchivo = async () => {
     if (!archivo) return;
     setCargando(true);
+    
+    setProgreso(10);
+    setTextoProgreso("Enviando archivo al servidor...");
+
+    const simulador = setInterval(() => {
+      setProgreso(prev => {
+        if (prev >= 85) {
+          setTextoProgreso("Analizando huellas digitales del audio...");
+          return 85; 
+        }
+        return prev + Math.floor(Math.random() * 15) + 5;
+      });
+    }, 600);
+
     const formData = new FormData();
     formData.append('archivo', archivo);
 
@@ -30,23 +87,30 @@ function App() {
         method: 'POST',
         body: formData,
       });
+      
       if (!respuesta.ok) throw new Error("Error en el servidor");
       const datos = await respuesta.json();
       
-      // --- NUEVA LÓGICA DE AUTO-SELECCIÓN ---
       let autoEliminar = [];
       if (datos.duplicados) {
         Object.values(datos.duplicados).forEach(rutas => {
-          // De cada grupo de duplicados, dejamos la 1ra canción a salvo (índice 0)
-          // y mandamos el resto a la lista de eliminación usando .slice(1)
           autoEliminar = [...autoEliminar, ...rutas.slice(1)];
         });
       }
       setArchivosAEliminar(autoEliminar);
-      // --------------------------------------
+      
+      clearInterval(simulador);
+      setProgreso(100);
+      setTextoProgreso("¡Análisis Exitoso!");
 
-      setResultado(datos);
+      setTimeout(() => {
+        setResultado(datos);
+        setProgreso(0); 
+      }, 800);
+
     } catch (error) {
+      clearInterval(simulador);
+      setProgreso(0);
       alert("Hubo un problema: " + error.message);
     } finally {
       setCargando(false);
@@ -55,6 +119,20 @@ function App() {
 
   const descargarFinal = async () => {
     setProcesandoFinal(true);
+    
+    setProgreso(15);
+    setTextoProgreso("Borrando clones y creando carpetas...");
+
+    const simulador = setInterval(() => {
+      setProgreso(prev => {
+        if (prev >= 90) {
+          setTextoProgreso("Empaquetando el ZIP final...");
+          return 90;
+        }
+        return prev + Math.floor(Math.random() * 10) + 10;
+      });
+    }, 400);
+
     try {
       const respuesta = await fetch('http://127.0.0.1:8000/generar-zip-final/', {
         method: 'POST',
@@ -65,100 +143,184 @@ function App() {
           organizar_por_genero: organizarPorGenero
         })
       });
-
+      
       if (!respuesta.ok) throw new Error("Error al generar el ZIP final");
-
+      
       const blob = await respuesta.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = "Musica_Organizada.zip";
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
+      
+      clearInterval(simulador);
+      setProgreso(100);
+      setTextoProgreso("¡Descarga lista!");
 
-      // --- NUEVO: REINICIO AUTOMÁTICO DE LA INTERFAZ ---
-      // Esperamos 2 segundos para que se alcance a descargar y luego borramos todo
       setTimeout(() => {
-        setArchivo(null);
-        setResultado(null);
-        setArchivosAEliminar([]);
-        setOrganizarPorGenero(false);
-        if (inputArchivoRef.current) {
-          inputArchivoRef.current.value = ""; // Limpiamos la caja de subida
-        }
-      }, 2000);
-      // -------------------------------------------------
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "Musica_Organizada.zip";
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }, 300);
+
+      setTimeout(() => {
+        resetearApp(); // Usamos nuestra nueva función maestra aquí también
+      }, 2500);
 
     } catch (error) {
+      clearInterval(simulador);
+      setProgreso(0);
       alert("Error en la descarga: " + error.message);
     } finally {
       setProcesandoFinal(false);
     }
   }
 
+  let clasesCaja = "caja-subida";
+  if (arrastrando) clasesCaja += " arrastrando";
+  if (entradaBloqueada) clasesCaja += " bloqueada";
+
   return (
-    <div className="contenedor">
-      <h1>🎵 Organizador Musical</h1>
-      <p>Sube tu carpeta comprimida (.zip o .rar) para encontrar duplicados y organizar tus canciones automáticamente.</p>
+    <div className="main-wrapper">
+      <div className="contenedor">
+        <h1 className="title-gradient">Organizador<span className="text-neon-fuchsia"> </span>Musical</h1>
+        <p className="description">
+          Sube tu carpeta comprimida (.zip, .rar) para <span className="text-neon-purple">eliminar duplicados</span> y <span className="text-neon-fuchsia">organizar por género</span> automáticamente.
+        </p>
 
-      <div className="caja-subida">
-        <input 
-          type="file" 
-          accept=".zip,.rar" 
-          onChange={manejarCambioArchivo} 
-          ref={inputArchivoRef} 
-        />
-      </div>
-
-      <button className="boton-principal" onClick={subirArchivo} disabled={!archivo || cargando}>
-        {cargando ? "Analizando canciones..." : "Subir y Analizar"}
-      </button>
-
-      {resultado && (
-        <div className="seccion-resultados">
-          <div className="alerta-exito">
-            <h3>¡Análisis Completado!</h3>
-            <p>Se encontraron <strong>{resultado.estadisticas.total_canciones_encontradas}</strong> canciones.</p>
-            <p>Duplicados detectados: <strong>{resultado.estadisticas.archivos_duplicados_detectados}</strong></p>
-          </div>
-
-          {/* Nueva visualización de la lista de eliminados (sin checkboxes) */}
-          {archivosAEliminar.length > 0 && (
-            <div>
-              <h3 style={{ color: '#d9534f' }}>🗑️ Canciones que se eliminarán</h3>
-              <p>Hemos conservado una copia original de cada una. Estas son las copias exactas que limpiaremos automáticamente:</p>
-              
-              <div style={{ maxHeight: '200px', overflowY: 'auto', backgroundColor: '#f8d7da', padding: '10px', borderRadius: '5px' }}>
-                <ul style={{ margin: 0, paddingLeft: '20px', color: '#721c24', fontSize: '0.9rem', textAlign: 'left' }}>
-                  {archivosAEliminar.map((ruta, idx) => (
-                    <li key={idx}>{ruta}</li>
-                  ))}
-                </ul>
+        <div 
+          className={clasesCaja}
+          onDragOver={manejarDragOver}
+          onDragLeave={manejarDragLeave}
+          onDrop={manejarDrop}
+          onClick={manejarClicCaja} 
+        >
+          <input 
+            type="file" 
+            accept=".zip,.rar" 
+            onChange={manejarCambioArchivo} 
+            ref={inputArchivoRef} 
+            style={{ display: 'none' }} 
+          />
+          
+          <div className="caja-subida-content">
+            {archivo ? (
+              <div className="archivo-info">
+                <span className="icon-neon">📦</span>
+                <span className="archivo-nombre">{archivo.name}</span>
+                
+                {/* --- NUEVO: Botón para quitar el archivo antes de subir --- */}
+                {!cargando && !resultado && (
+                  <button 
+                    className="btn-quitar-archivo" 
+                    onClick={(e) => {
+                      e.stopPropagation(); // Evita que se abra la ventana de buscar archivos
+                      resetearApp();
+                    }}
+                    title="Quitar archivo"
+                  >
+                    ✖
+                  </button>
+                )}
               </div>
-            </div>
-          )}
-
-          <div className="controles-finales">
-            <label className="opcion-archivo" style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
-              <input 
-                type="checkbox" 
-                checked={organizarPorGenero}
-                onChange={(e) => setOrganizarPorGenero(e.target.checked)}
-              />
-              🗂️ Organizar canciones en carpetas por Género Musical
-            </label>
-
-            <button 
-              className="boton-secundario" 
-              onClick={descargarFinal}
-              disabled={procesandoFinal}
-            >
-              {procesandoFinal ? "Empaquetando..." : "⬇️ Procesar y Descargar ZIP"}
-            </button>
+            ) : (
+              <>
+                <div className="isometric-stack">
+                  <div className="layer json-layer">JSON</div>
+                  <div className="layer js-layer">JS</div>
+                  <div className="layer zip-layer">ZIP</div>
+                </div>
+                <p className="upload-text">Arrastra tu archivo o haz clic aquí</p>
+                <p className="upload-subs">Formatos soportados: .zip, .rar</p>
+              </>
+            )}
           </div>
         </div>
-      )}
+
+        {!resultado && (
+          <>
+            <button 
+              className="boton-principal button-neon-purple" 
+              onClick={subirArchivo} 
+              disabled={!archivo || entradaBloqueada}
+            >
+              {cargando ? "Procesando..." : "Subir y Analizar"}
+            </button>
+
+            {cargando && (
+              <div className="progress-wrapper">
+                <div className="progress-container">
+                  <div className="progress-bar-fill" style={{ width: `${progreso}%` }}></div>
+                </div>
+                <span className="progress-text">{textoProgreso} ({Math.round(progreso)}%)</span>
+              </div>
+            )}
+          </>
+        )}
+
+        {resultado && (
+          <div className="seccion-resultados">
+            <div className="resumen-card">
+              <h3>Análisis Completado<span className="dot-green">.</span></h3>
+              <div className="stats-row">
+                <p>Canciones Encontradas: <span className="stat-number">{resultado.estadisticas.total_canciones_encontradas}</span></p>
+                <p>Duplicados Detectados: <span className="stat-number text-red">{resultado.estadisticas.archivos_duplicados_detectados}</span></p>
+              </div>
+            </div>
+
+            {archivosAEliminar.length > 0 && (
+              <div className="eliminados-card">
+                <h3>Copias que eliminaremos</h3>
+                <div className="eliminados-list-scroll">
+                  <ul>
+                    {archivosAEliminar.map((ruta, idx) => (
+                      <li key={idx} title={ruta}>{ruta}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
+
+            <div className="controles-finales card-dark">
+              <label className="opcion-checkbox">
+                <input 
+                  type="checkbox" 
+                  checked={organizarPorGenero}
+                  onChange={(e) => setOrganizarPorGenero(e.target.checked)}
+                />
+                Organizar canciones por Género Musical
+              </label>
+
+              {/* --- NUEVO: Fila para agrupar ambos botones finales --- */}
+              <div className="botones-accion-row">
+                <button 
+                  className="boton-secundario button-neon-fuchsia" 
+                  onClick={descargarFinal} 
+                  disabled={procesandoFinal}
+                >
+                  {procesandoFinal ? "Procesando..." : "Procesar y Descargar"}
+                </button>
+
+                <button 
+                  className="boton-secundario button-outline-red" 
+                  onClick={resetearApp} 
+                  disabled={procesandoFinal}
+                >
+                Empezar de nuevo
+                </button>
+              </div>
+
+              {procesandoFinal && (
+                <div className="progress-wrapper">
+                  <div className="progress-container">
+                    <div className="progress-bar-fill" style={{ width: `${progreso}%` }}></div>
+                  </div>
+                  <span className="progress-text">{textoProgreso} ({Math.round(progreso)}%)</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
