@@ -1,85 +1,102 @@
-```
-# 🎵 Organizador Musical Modern-Neon 🚀
-
-![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
-![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
-![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
+# Organizador Musical
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 
 Este es un sistema **Full Stack** diseñado para melómanos y DJs que necesitan limpiar sus bibliotecas musicales. Permite subir archivos comprimidos (`.zip`, `.rar`), analizar el contenido para detectar duplicados mediante **hashing MD5** y organizar las canciones automáticamente por **Género Musical** leyendo los metadatos de los archivos.
 
 ---
 
-## 🔗 Enlace al Proyecto
+## Enlace al Proyecto
+
 Puedes probar la aplicación en vivo aquí:  
-👉 **[https://pepejsc.github.io/organizador-musical/](https://pepejsc.github.io/organizador-musical/)**
+**[https://pepejsc.github.io/organizador-musical/](https://pepejsc.github.io/organizador-musical/)**
 
 ---
 
-## ✨ Características Principales
+## Características Principales
 
-* **Interfaz Modern-Neon:** Diseño oscuro con acentos fucsia y morado neón, optimizado para una experiencia visual atractiva.
-* **Detección de Duplicados:** Analiza la "huella digital" (Hash) de cada canción. No importa si tienen nombres diferentes; si el audio es el mismo, el sistema lo detecta.
-* **Organización por Géneros:** Utiliza la librería `mutagen` para extraer el género de los metadatos y mover los archivos a carpetas correspondientes.
-* **Drag & Drop:** Caja de subida intuitiva con soporte para arrastrar y soltar archivos.
-* **Procesamiento en la Nube:** Backend potente en Python que maneja la descompresión y re-empaquetado de archivos.
+- **Interfaz Modern-Neon:** Diseño oscuro con acentos fucsia y morado neón.
+- **Detección de Duplicados:** Analiza la "huella digital" (Hash MD5) de cada canción.
+- **Organización por Géneros:** Utiliza la librería `mutagen` para clasificar archivos automáticamente.
+- **Drag & Drop:** Caja de subida intuitiva para archivos comprimidos.
+- **Procesamiento Eficiente:** Backend en Python que maneja la descompresión y limpieza.
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+## Tecnologías Utilizadas
 
 ### Frontend
-* **React.js**: Biblioteca principal para la interfaz.
-* **Vite**: Herramienta de construcción ultra rápida.
-* **CSS3**: Estilos personalizados con variables, gradientes y animaciones neón.
+- **React.js** y **Vite**
+- **CSS3 Custom Styles** (Neon Design)
 
 ### Backend
-* **FastAPI**: Framework de alto rendimiento para la API.
-* **Mutagen**: Para la lectura de metadatos musicales.
-* **Patool**: Para el manejo compatible de archivos .rar y .zip.
-* **Uvicorn**: Servidor ASGI para producción.
+- **FastAPI**
+- **Mutagen** (Metadatos)
+- **Patool** (Manejo de `.rar` y `.zip`)
 
 ---
 
-## 🏗️ Arquitectura del Sistema
-
-El proyecto está dividido en dos partes conectadas de forma segura:
-1.  **Frontend**: Alojado en **GitHub Pages**.
-2.  **Backend (API)**: Desplegado en **Render**.
-3.  **Comunicación**: Protegida mediante políticas de **CORS** restringidas.
-
----
-
-## 🚀 Instalación Local
-
-Si deseas ejecutar este proyecto en tu máquina:
+## Instalación Local
 
 ### 1. Clonar el repositorio
+
 ```bash
-git clone [https://github.com/Pepejsc/organizador-musical.git](https://github.com/Pepejsc/organizador-musical.git)
+git clone https://github.com/Pepejsc/organizador-musical.git
+
+cd organizador-musical
 ```
 
 ### 2. Configurar Backend (Python)
 ```bash
-cd organizador-musical
+cd backend
+
 python -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate
+
+# Activar entorno virtual
+
+# Windows
+venv\Scripts\activate
+
+# macOS/Linux
+source venv/bin/activate
+
+# Instalar dependencias
 pip install -r requirements.txt
+
+# Ejecutar servidor
+
 uvicorn main:app --reload
 ```
-
 ### 3. Configurar Frontend (React)
 ```bash
-cd organizador-frontend
+cd ../frontend 
+
 npm install
+
 npm run dev
 ```
-
----
-
-## 👤 Autor
-**Pepe (P3p3)** *Desarrollador enfocado en soluciones web modernas.*
-
----
-*Nota: Este proyecto utiliza una instancia gratuita en Render. Si el servidor está inactivo, la primera petición puede tardar unos 40 segundos en procesarse mientras el motor despierta.*
+### Estructura del Proyecto
+```bash
+organizador-musical/
+├── backend/
+│   ├── main.py              # Lógica principal de la API (FastAPI)
+│   ├── requirements.txt     # Librerías necesarias de Python
+│   └── .gitignore           # Archivos ignorados por Git
+├── organizador-frontend/
+│   ├── src/                 # Código fuente de React
+│   │   ├── assets/          # Imágenes y estilos neón
+│   │   ├── App.jsx          # Componente principal
+│   │   └── main.jsx         # Punto de entrada de React
+│   ├── index.html           # Página base
+│   ├── package.json         # Scripts y dependencias de NPM
+│   └── vite.config.js       # Configuración de Vite
+└── README.md                # Documentación del proyecto
 ```
+## Autor
+Pepe (P3p3)
+GitHub: Pepejsc
+
+## Licencia
+Este proyecto está bajo la licencia MIT. ¡Siéntete libre de usarlo y mejorarlo!
