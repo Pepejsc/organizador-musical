@@ -17,7 +17,11 @@ app = FastAPI(title="Organizador Musical API")
 # --- NUEVO: Configuración de CORS ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # En producción se pone la URL de React, por ahora permitimos todo
+    allow_origins=[
+        "http://localhost:5173",
+        "https://pepejsc.github.io",
+        "https://pepejsc.github.io/organizador-musical"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
