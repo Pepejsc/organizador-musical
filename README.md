@@ -1,4 +1,4 @@
-```markdown
+```
 # 🎵 Organizador Musical Modern-Neon 🚀
 
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
@@ -83,5 +83,3 @@ npm run dev
 ---
 *Nota: Este proyecto utiliza una instancia gratuita en Render. Si el servidor está inactivo, la primera petición puede tardar unos 40 segundos en procesarse mientras el motor despierta.*
 ```
-
----
