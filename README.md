@@ -66,7 +66,6 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # Ejecutar servidor
-
 uvicorn main:app --reload
 ```
 ### 3. Configurar Frontend (React)
