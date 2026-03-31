@@ -1,0 +1,13 @@
+# Entorno de Python
+venv/
+__pycache__/
+*.pyc
+
+# Archivos temporales de música que suba el usuario
+musica_*/
+extraido/
+*.zip
+*.rar
+
+# Archivos de entorno secretos
+.env
