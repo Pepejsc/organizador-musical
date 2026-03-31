@@ -1,7 +1,3 @@
-¡Claro que sí, Pepe! Un buen **README** es la cara de tu proyecto. Es lo que otros desarrolladores (o reclutadores) ven primero en GitHub para entender que no solo hiciste una página bonita, sino que manejas tecnologías modernas de inicio a fin.
-
-Aquí tienes un diseño de `README.md` profesional, con iconos, secciones claras y el enlace a tu proyecto. Solo tienes que copiarlo y pegarlo en el archivo `README.md` que tienes en la raíz de tu repositorio.
-
 ---
 
 ```markdown
